@@ -4,7 +4,7 @@
 module.exports =
     {
         baseDir: "static/",
-        path: "static/images/${profileName}/${styleName}/${fileName}.${type}",
+        path: "images/:profileName/:styleName/:fileName.:type",
         default_url: "static/images/${profileName}/${styleName}/missing.png",
         profiles:
             {

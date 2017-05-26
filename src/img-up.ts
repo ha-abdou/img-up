@@ -1,11 +1,21 @@
 /**
  * Created by abdou on 25/05/17.
  */
+"use strict";
+//import { PathHandler } from './pathParser';
+//import { Magic } from './magic';
 
 export class ImgUp
 {
-	constructor ()
+	constructor (public settings)
 	{
-		console.log("testss");
+
 	}
+
+	save (filePath: string, params: any, callBack: Function)
+	{
+
+		callBack();
+	}
+
 }
