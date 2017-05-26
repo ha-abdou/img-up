@@ -6,6 +6,6 @@ export class ImgUp
 {
 	constructor ()
 	{
-		console.log("test");
+		console.log("testss");
 	}
 }
