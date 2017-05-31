@@ -1,6 +1,6 @@
 "use strict";
 
-let settings = [require("./settings/s_2"),require("./settings/s_1")];
+let settings = [require("./settings/s_1"),require("./settings/s_2")];
 let images   = ["images/a.png", "images/b.png", "images/c.png", "images/d.png", "images/e.png"];
 let copyList = require('./util/copier').copyList;
 let imgUpTest = require('./src/img-up.test');
@@ -39,7 +39,7 @@ function testSave ()
             );
         }
     }
-    console.log("\x1b[42msave test success :)\x1b[0m");
+    console.log("\x1b[42mend testing :)\x1b[0m");
 }
 
 

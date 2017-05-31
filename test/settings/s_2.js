@@ -4,7 +4,7 @@
 module.exports =
     {
         baseDir: "",
-        path: "staticImages/:type/:styleName/:profileName/:fileName",
+        path: "static/staticImages/:type/:styleName/:profileName/:fileName",
         profiles:
             {
                 avatar:
@@ -14,7 +14,7 @@ module.exports =
                                 medium: "300x300>",
                                 thumb: "100x100>"
                             },
-                        delete_origin: true
+                        delete_origin: false
                     },
             }
     };

@@ -2,20 +2,76 @@
  * Created by abdou on 25/05/17.
  */
 "use strict";
-//import { PathHandler } from './pathParser';
-//import { Magic } from './magic';
+import { PathHandler } from './PathHandler';
+import { Magic } from './magic';
+import * as fileType from 'file-type';
+import * as readChunk from 'read-chunk';
+import {Profile, Setting} from "./interfaces";
+import * as fs from "fs";
 
 export class ImgUp
 {
-	constructor (public settings)
+	constructor (public settings: Setting)
 	{
 
 	}
 
 	save (filePath: string, params: any, callBack: Function)
 	{
+		let profile: Profile;
+		let path: string;
 
-		callBack();
+		profile = this.settings.profiles[params.profile];
+		path = PathHandler.prepares(this.settings.path,
+			{
+				type: profile.type ? profile.type : fileType(readChunk.sync(filePath, 0, 4100)).ext,
+				profileName: params.profile,
+				fileName: params.fileName
+			});
+		this.applyStyles(filePath, profile.styles, path,
+			(errors, images)=>{
+				if (errors.length > 0 ) callBack(errors, images);
+				if (profile.delete_origin)
+					fs.unlinkSync(filePath);
+				else callBack(null, images);
+				//todo save to database
+			}
+		);
+	}
+	applyStyles (filePath: string, styles: any, path: string, callBack: Function)
+	{
+		let stack: number;
+		let errors: any;
+		let images: {};
+
+		stack = 0;
+		errors = [];
+		images = {};
+		for (let style in styles)
+		{
+			if (styles.hasOwnProperty(style))
+			{
+				stack++;
+				this.applyStyle(filePath, PathHandler.prepares(path, {styleName: style}),
+					styles[style], (err, image)=>{
+						stack--;
+						if (err) errors.push({msg: "can't resize", err});
+						else images[style] = image;
+						if (stack === 0)
+							callBack(errors, images);
+					});
+			}
+		}
+	}
+
+	applyStyle (filePath: string, newPath: string, style: any, callBack: Function)
+	{
+		PathHandler.checkDir(this.settings.baseDir + newPath);
+		Magic.resize(filePath, this.settings.baseDir + newPath, style,
+			(err, image)=>{
+				if (err) callBack({msg: "can't resize", err: err}, image);
+				else callBack(null, {url: newPath});
+			});
 	}
 
 }

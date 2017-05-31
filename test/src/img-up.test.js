@@ -8,7 +8,9 @@ let randomParagraph = require('random-paragraph');
 let fs = require('fs');
 let readChunk = require('read-chunk');
 let fileType = require('file-type');
-
+let DataStore = require('nedb');
+let db = {};
+db.images = new DataStore({ filename: 'db/images.db', autoload: true });
 
 function prepares (path , params)//todo
 {
@@ -35,6 +37,9 @@ class ImgUpTest
 
     static save (imagePath, setting, imgUp, callback)
     {
+        function ckeck() {
+
+        }
         try
         {
             let ins = new imgUp(setting);
@@ -50,12 +55,16 @@ class ImgUpTest
                             profile: profile,
                             fileName: randomWords(),
                             alt: randomParagraph(),
-                            keyWord: randomWords(8),
+                            keyWords: randomWords(8),
                         };
                     ins.save(imagePath, params,
                         (err, img)=>{
-                            if (err) console.log("\x1b[45merror on save" +
-                                " image for test :(\x1b[0m");
+                            if (err)
+                            {
+                                console.log("\x1b[45merror on save" +
+                                    " image for test :(\x1b[0m");
+                                throw err[0].err;
+                            }
                             ImgUpTest.check(imagePath, img, params, setting);
                         });
                 }
@@ -67,10 +76,10 @@ class ImgUpTest
         }
     }
 
-    //if delete_origin
-    //if all style how applied correctly
-    //if type
-    //if baseDir
+    //if delete_origin ok todo src url
+    //if all style how applied correctly ok
+    //if type ok
+    //if baseDir ok
     //check database
     static check (orgFilePath, img, params, setting)
     {
@@ -79,16 +88,23 @@ class ImgUpTest
         let type;
 
         profile = setting.profiles[params.profile];
-        if (profile.delete_origin === fs.existsSync(orgFilePath))
-            throw "delete_origin error";
         type = profile.type ? profile.type : getExt(orgFilePath);
         params.type = type;
         path = prepares(setting.path, {type: type, profileName: params.profile, fileName: params.fileName});
+        if (profile.delete_origin === fs.existsSync(orgFilePath))
+            throw "delete_origin error";
+        //todo start
         ImgUpTest.checkStyles(path, params, setting, img);
+        /*db.images.findOne({ _id: img.id }, (err, doc)=> {
+            if (err) throw err;
+            if (doc === null) throw "image not saved correctly to dataBase:" +
+            " id error";
+            if (profile.delete_origin === fs.existsSync(orgFilePath))
+                throw "delete_origin error";
+            //todo start
+            ImgUpTest.checkStyles(path, params, setting, img);
 
-
-
-        //throw "errozr";
+        });*/
     }
 
     static checkStyles (path, params, setting, img)
@@ -102,14 +118,14 @@ class ImgUpTest
 
             if (styles.hasOwnProperty(style))
             {
-                _path = setting.baseDir + prepares(path, {styleName: style});
-                if (!fs.existsSync(_path))
+                _path = prepares(path, {styleName: style});
+                if (!fs.existsSync(setting.baseDir + _path))
                 {
-                    throw "file not exist on: " + _path;
+                    throw "file not exist on: " + setting.baseDir + _path;
                 }
-                else if (getExt(_path) !== params.type)
+                else if (getExt(setting.baseDir + _path) !== params.type)
                 {
-                    throw "file has wrong type: should be " + params.type +"\n" + _path;
+                    throw "file has wrong type: should be " + params.type +"\n" + setting.baseDir + _path;
                 }
                 else if (img[style].url !== _path)
                 {
