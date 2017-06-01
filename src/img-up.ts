@@ -2,15 +2,24 @@
  * Created by abdou on 25/05/17.
  */
 "use strict";
-import { PathHandler } from './PathHandler';
-import { Magic } from './magic';
-import * as fileType from 'file-type';
-import * as readChunk from 'read-chunk';
-import {Profile, Setting} from "./interfaces";
-import * as fs from "fs";
+import { PathHandler }		from './PathHandler';
+import { Magic }			from './magic';
+import * as fileType		from 'file-type';
+import * as readChunk		from 'read-chunk';
+import {Profile, Setting, Image}	from "./interfaces";
+import * as fs				from "fs";
+let DataStore = require('nedb');
+let db = {
+	images: new DataStore({
+		filename: 'db/images.db',
+		autoload: true
+	})
+};
 
+//todo original photo
 export class ImgUp
 {
+
 	constructor (public settings: Setting)
 	{
 
@@ -18,9 +27,12 @@ export class ImgUp
 
 	save (filePath: string, params: any, callBack: Function)
 	{
-		let profile: Profile;
-		let path: string;
+		let profile:	Profile;
+		let path:		string;
+		let image:		Image;
 
+		image = <Image>{fileName: params.fileName, alt: params.alt,
+				keyWords: params.keyWords, path: filePath};
 		profile = this.settings.profiles[params.profile];
 		path = PathHandler.prepares(this.settings.path,
 			{
@@ -33,12 +45,19 @@ export class ImgUp
 				if (errors.length > 0 ) callBack(errors, images);
 				if (profile.delete_origin)
 					fs.unlinkSync(filePath);
-				else callBack(null, images);
-				//todo save to database
+				image.createdAt = new Date();
+				image.updateAt = new Date();
+				db.images.insert(image, function (err, newDoc) {
+					callBack(null, newDoc);
+				});
+
+			},
+			(stl, img)=> {
+				image[stl] = img;
 			}
 		);
 	}
-	applyStyles (filePath: string, styles: any, path: string, callBack: Function)
+	applyStyles (filePath: string, styles: any, path: string, callBack: Function, eachTime: Function)
 	{
 		let stack: number;
 		let errors: any;
@@ -56,7 +75,11 @@ export class ImgUp
 					styles[style], (err, image)=>{
 						stack--;
 						if (err) errors.push({msg: "can't resize", err});
-						else images[style] = image;
+						else
+						{
+							images[style] = image;
+							eachTime(style, image);
+						}
 						if (stack === 0)
 							callBack(errors, images);
 					});
@@ -70,7 +93,7 @@ export class ImgUp
 		Magic.resize(filePath, this.settings.baseDir + newPath, style,
 			(err, image)=>{
 				if (err) callBack({msg: "can't resize", err: err}, image);
-				else callBack(null, {url: newPath});
+				else callBack(null, {url: newPath, path: this.settings.baseDir + newPath});
 			});
 	}
 

@@ -12,6 +12,7 @@ export interface Profile
 export interface Setting
 {
 	baseDir?:		string,
+	dbBaseDir?:		string,
 	path:			string,
 	default_url?:	string,
 	profiles:
@@ -19,3 +20,17 @@ export interface Setting
 			[propName: string]: Profile
 		},
 }
+
+export interface Image
+{
+	id:			string,
+	fileName:	string,
+	path:		string,
+	url:		string,
+	alt:		string,
+	keyWords:	string,
+	[propName:	string]: any,
+	createdAt:	Date,
+	updateAt:	Date
+}
+

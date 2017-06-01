@@ -9,8 +9,11 @@ let fs = require('fs');
 let readChunk = require('read-chunk');
 let fileType = require('file-type');
 let DataStore = require('nedb');
+/*
 let db = {};
 db.images = new DataStore({ filename: 'db/images.db', autoload: true });
+*/
+
 
 function prepares (path , params)//todo
 {
@@ -37,9 +40,6 @@ class ImgUpTest
 
     static save (imagePath, setting, imgUp, callback)
     {
-        function ckeck() {
-
-        }
         try
         {
             let ins = new imgUp(setting);
