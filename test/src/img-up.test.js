@@ -93,18 +93,8 @@ class ImgUpTest
         path = prepares(setting.path, {type: type, profileName: params.profile, fileName: params.fileName});
         if (profile.delete_origin === fs.existsSync(orgFilePath))
             throw "delete_origin error";
-        //todo start
         ImgUpTest.checkStyles(path, params, setting, img);
-        /*db.images.findOne({ _id: img.id }, (err, doc)=> {
-            if (err) throw err;
-            if (doc === null) throw "image not saved correctly to dataBase:" +
-            " id error";
-            if (profile.delete_origin === fs.existsSync(orgFilePath))
-                throw "delete_origin error";
-            //todo start
-            ImgUpTest.checkStyles(path, params, setting, img);
-
-        });*/
+        //todo start alt src key...
     }
 
     static checkStyles (path, params, setting, img)

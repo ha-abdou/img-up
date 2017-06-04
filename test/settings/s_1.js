@@ -14,9 +14,7 @@ module.exports =
                             {
                                 medium: "300x300>",
                                 thumb: "100x100>"
-                            },
-                        delete_origin: true,
-                        type: "jpg"
+                            }
                     },
             }
     };
