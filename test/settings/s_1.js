@@ -16,5 +16,14 @@ module.exports =
                                 thumb: "100x100>"
                             }
                     },
+            },
+        dbSetting:
+            {
+                dataStore: "nedb",
+                saveErrors: true,
+                params:
+                    {
+                        dataFiles: "db"
+                    }
             }
     };

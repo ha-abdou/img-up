@@ -9,6 +9,19 @@ export interface Profile
 	type:			string,
 }
 
+export interface DBSetting
+{
+	dataStore: string,
+	saveErrors?: boolean,
+	params:
+		{
+			dataFiles?:	string,
+			login?:		string,
+			password?:	string,
+			hostname?:	string
+		}
+}
+
 export interface Setting
 {
 	baseDir?:		string,
@@ -19,11 +32,12 @@ export interface Setting
 		{
 			[propName: string]: Profile
 		},
+	dbSetting?: DBSetting;
 }
 
 export interface Image
 {
-	id:			string,
+	_id:		string,
 	fileName:	string,
 	path:		string,
 	url:		string,
