@@ -8,6 +8,8 @@
     "watch": "grunt watch"
   },
   "dependencies": {
+    "@types/imagemagick": "0.0.29",
+    "@types/nedb": "^1.8.3",
     "file-type": "^4.3.0",
     "imagemagick": "^0.1.3",
     "mkdirp": "^0.5.1",

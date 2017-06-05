@@ -16,5 +16,14 @@ module.exports =
                             },
                         delete_origin: false
                     },
+            },
+        dbSetting:
+            {
+                dataStore: "nedb",
+                saveErrors: true,
+                params:
+                    {
+                        dataFiles: "db"
+                    }
             }
     };
