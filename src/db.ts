@@ -1,5 +1,5 @@
 import {DBSetting} from "./interfaces";
-import { NedbOrm } from "./orms/nedb/nedbOrm";
+import {NedbOrm} from "./orms/nedb/nedbOrm";
 import {ImagesHandler as NedbImagesHandler} from "./orms/nedb/imageSaver";
 
 export class DB

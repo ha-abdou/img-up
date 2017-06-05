@@ -1,6 +1,3 @@
-/**
- * Created by abdou on 25/05/17.
- */
 "use strict";
 import {PathHandler}				from './PathHandler';
 import {Magic}						from './magic';
@@ -9,8 +6,10 @@ import {Profile, Setting, Image}	from "./interfaces";
 import * as fileType				from 'file-type';
 import * as readChunk				from 'read-chunk';
 import * as fs						from "fs";
+import {makeImage} from "./functions/makeImage";
 
 //todo original photo
+//todo check settings
 export class ImgUp
 {
 	private db: DB;
@@ -26,8 +25,8 @@ export class ImgUp
 		let path:		string;
 		let image:		Image;
 
-		image = <Image>{fileName: params.fileName, alt: params.alt, url: "todo",
-				keyWords: params.keyWords, path: filePath};
+		image = makeImage({fileName: params.fileName, alt: params.alt, url: "todo",
+				keyWords: params.keyWords, path: filePath});
 		profile = this.settings.profiles[params.profile];
 		path = PathHandler.prepares(this.settings.path,
 			{
@@ -41,8 +40,8 @@ export class ImgUp
 				if (profile.delete_origin)
 					fs.unlinkSync(filePath);
 				this.db.images.save(image, (err, newImage)=>{
-					callBack(err, newImage)
-				});
+					callBack(err, newImage);
+				})
 			},
 			(stl, img)=> {
 				image[stl] = img;

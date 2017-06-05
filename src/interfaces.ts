@@ -1,6 +1,3 @@
-/**
- * Created by abdou on 31/05/17.
- */
 
 export interface Profile
 {
@@ -42,7 +39,7 @@ export interface Image
 	path:		string,
 	url:		string,
 	alt:		string,
-	keyWords:	string,
+	keyWords:	string[],
 	[propName:	string]: any,
 	createdAt:	Date,
 	updateAt:	Date

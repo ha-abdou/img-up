@@ -1,5 +1,6 @@
 import {Image} from "../../interfaces";
 import * as Nedb from "nedb";
+import {makeImage} from "../../functions/makeImage";
 
 export class ImagesHandler
 {
@@ -16,18 +17,33 @@ export class ImagesHandler
 			callback(err, newDoc);
 		});
 	}
-/*
-	edit (id: string, filds: {fileName?: string, alt?: string,
-		keyWords?: string[], image?: string, url?: string})
+
+	edit (id: string, fields: {fileName?: string, alt?: string, path?: string,
+		keyWords?: string[], url?: string}, styles: {},
+		callback: Function)
 	{
 		let image: Image;
 
-		image = <Image>{fileName: filds.fileName, alt: filds.alt, url: filds.url,
-			keyWords: filds.keyWords};
+		image = makeImage(fields);
+		image.updateAt = new Date();
+		if (styles)
+		{
+			for (let style in styles)
+			{
+				if (styles.hasOwnProperty(style))
+					image[style] = styles[style];
+			}
+		}
+		this.db.update({ _id: id }, { $set: image }, function (err, n) {
+			callback(err, n);
+		});
 
 	}
-*/
-	get (id: string, callback: Function)
+
+	getById (id: string, callback: Function)
 	{
+		this.db.findOne({_id: id}, (err, doc)=> {
+			callback(err, doc);
+		});
 	}
 }

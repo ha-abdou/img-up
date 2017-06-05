@@ -26,23 +26,5 @@ export class NedbOrm
 		connect(dataFilesPath);
 		this.images = new ImagesHandler(db.images);
 	}
-/*
-	saveImage (image: Image, callback: Function)
-	{
-		image.createdAt = new Date();
-		image.updateAt = image.createdAt;
-		db.images.insert(image, (err, newDoc)=>{
-			callback(err, newDoc);
-		});
-	}
 
-	edit (id: string, filds: {fileName?: string, alt?: string,
-		keyWords?: string[], image?: string})
-	{
-	}
-
-	get (id: string)
-	{
-	}
-	*/
 }
