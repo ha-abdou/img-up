@@ -3,7 +3,14 @@ export interface Profile
 {
 	styles:			{},
 	delete_origin?:	boolean,
-	type:			string,
+	type?:			string,
+	source?:
+		{
+			path:		string,
+			baseDir?:	string,
+			style:		string,
+			type?:		string
+		}
 }
 
 export interface DBSetting

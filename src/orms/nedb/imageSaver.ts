@@ -9,7 +9,7 @@ export class ImagesHandler
 
 	}
 
-	save (image: Image, callback: Function)
+	save (image: Image, callback: (err, newDoc)=>any)
 	{
 		image.createdAt = new Date();
 		image.updateAt = image.createdAt;
@@ -20,7 +20,7 @@ export class ImagesHandler
 
 	edit (id: string, fields: {fileName?: string, alt?: string, path?: string,
 		keyWords?: string[], url?: string}, styles: {},
-		callback: Function)
+		  callback: (err, num)=>any)
 	{
 		let image: Image;
 
@@ -40,10 +40,15 @@ export class ImagesHandler
 
 	}
 
-	getById (id: string, callback: Function)
+	getById (id: string, callback: (err, doc)=>any)
 	{
 		this.db.findOne({_id: id}, (err, doc)=> {
 			callback(err, doc);
 		});
+	}
+
+	remove(id: string, callback: (err, num)=>any)
+	{
+		this.db.remove({ _id: id }, {}, callback)
 	}
 }
