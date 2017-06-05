@@ -45,3 +45,10 @@ export interface Image
 	updateAt:	Date
 }
 
+export interface ImagePath
+{
+	src:		string,
+	dest:		string,
+	baseDir:	string
+}
+
