@@ -18,23 +18,11 @@ export class ImagesHandler
 		});
 	}
 
-	edit (id: string, fields: {fileName?: string, alt?: string, path?: string,
-		keyWords?: string[], url?: string}, styles: {},
+	edit (id: string, fields: {alt?: string, keyWords?: string[]},
 		  callback: (err, num)=>any)
 	{
-		let image: Image;
-
-		image = makeImage(fields);
-		image.updateAt = new Date();
-		if (styles)
-		{
-			for (let style in styles)
-			{
-				if (styles.hasOwnProperty(style))
-					image[style] = styles[style];
-			}
-		}
-		this.db.update({ _id: id }, { $set: image }, function (err, n) {
+		fields['updateAt'] = new Date();
+		this.db.update({ _id: id }, { $set: fields }, function (err, n) {
 			callback(err, n);
 		});
 
@@ -50,5 +38,9 @@ export class ImagesHandler
 	remove(id: string, callback: (err, num)=>any)
 	{
 		this.db.remove({ _id: id }, {}, callback)
+	}
+
+	update(param: { _id: string }, img: any, param3: {}, param4: (err, num) => any) {
+
 	}
 }

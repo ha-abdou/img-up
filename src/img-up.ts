@@ -9,7 +9,8 @@ import * as fs						from "fs";
 import {makeImage}					from "./functions/makeImage";
 import {extend}						from "./functions/extend";
 
-//todo original photo
+//todo edit  fileName
+//todo check callbacks do else
 //todo check settings
 export class ImgUp
 {
@@ -20,7 +21,8 @@ export class ImgUp
 		this.db = new DB(settings.dbSetting);
 	}
 
-	save (filePath: string, params: any, callback: (err, newImage)=>any)
+	save (filePath: string, params: any, callback: (err, newImage)=>any,
+		  toDB?: boolean)
 	{
 		let profile:	Profile;
 		let path:		ImagePath;
@@ -29,7 +31,7 @@ export class ImgUp
 
 		tasks = 2;
 		image = makeImage({fileName: params.fileName, alt: params.alt, url: "todo",
-				keyWords: params.keyWords, path: filePath});
+			keyWords: params.keyWords, path: filePath});
 		profile = this.settings.profiles[params.profile];
 		path = this.imagePathHandler(filePath, profile, params);
 		Magic.applyStyles(path , profile.styles,
@@ -67,9 +69,14 @@ export class ImgUp
 			tasks--;
 			if (tasks !== 0)
 				return;
-			this.db.images.save(image, (err, newImage)=>{
-				callback(err, newImage);
-			});
+			if (toDB === undefined || toDB === true)
+			{
+				this.db.images.save(image, (err, newImage)=>{
+					callback(err, newImage);
+				});
+			}
+			else if (toDB === false)
+				callback(null, image);
 			if (profile.delete_origin)
 				fs.unlinkSync(filePath);
 		}
@@ -83,24 +90,13 @@ export class ImgUp
 		this.getById(id, (err, img)=>{
 			if (err) callback(err, img);
 			this.db.images.remove(id, (err, num)=>{
-				if (err) callback(err, 0);
+				if (err) callback(err, num);
 				check();
 			});
-			fs.unlink(img.path, (err)=>{
-				if (err) callback(err, 0);
+			this.unlinkImage(img, (err, img)=>{
+				if (err) callback(err, img);
 				check();
 			});
-			for (let i in img)
-			{
-				if (img.hasOwnProperty(i) && img[i].path)
-				{
-					tacks++;
-					fs.unlink(img[i].path, (err)=>{
-						if (err) callback(err, 0);
-						check();
-					})
-				}
-			}
 		});
 		function check ()
 		{
@@ -113,6 +109,51 @@ export class ImgUp
 	getById (id: string, callback: (err, image)=>any)
 	{
 		this.db.images.getById(id, callback);
+	}
+
+	edit (id: string, fields: {alt?: string, keyWords?: string[]},
+		  callback: (err, num)=>any)
+	{
+		this.db.images.edit(id, {
+			alt: fields.alt,
+			keyWords: fields.keyWords
+		}, callback);
+	}
+
+	replace ()
+	{
+		
+	}
+
+	private unlinkImage (img: Image, callback: (err, newImg)=>any)
+	{
+		let tacks: number;
+
+		tacks = 1;
+		fs.unlink(img.path, (err)=>{
+			if (err) callback(err, img);
+			img.path = "";
+			img.url = "";
+			check();
+		});
+		for (let i in img)
+		{
+			if (img.hasOwnProperty(i) && img[i].path)
+			{
+				tacks++;
+				fs.unlink(img[i].path, (err)=>{
+					if (err) callback(err, img);
+					delete img[i];
+					check();
+				})
+			}
+		}
+		function check ()
+		{
+			tacks--;
+			if (tacks === 0)
+				callback(null, img);
+		}
 	}
 
 	private imagePathHandler (filePath: string, profile: Profile, params: any): ImagePath
@@ -132,6 +173,33 @@ export class ImgUp
 	}
 }
 
+/*
+ let image: Image;
+
+ image = makeImage(params);
+ if (filePath && filePath !== "")
+ {
+ this.getById(id, (err, img)=>{
+ if (err) return (callback(err, img));
+ this.unlinkImage(img, (err, dImg)=>{
+ if (err) return (callback(err, dImg));
+ this.save(filePath, params, (err, newImg)=>{
+ if (err) return (callback(err, newImg));
+ this.db.images.update({_id: id}, img, {}, function (err, num) {
+ callback(err, num);
+ });
+ }, false);
+ })
+ });
+ }
+ updateParams(image);
+
+ function updateParams (img: Image)
+ {
+ //img._id = id;
+
+ }
+ */
 /*
 module.exports =
 	{
