@@ -1,16 +1,10 @@
-import {PathHandler}				from './PathHandler';
-import {Magic}						from './magic';
 import {DB} 						from './db';
-import {Profile, Setting, Image,
-		ImagePath}    				from "./interfaces";
-import * as fileType				from 'file-type';
-import * as readChunk				from 'read-chunk';
+import {Setting, Image}				from "./interfaces";
 import * as fs						from "fs";
 import {makeImage}					from "./functions/makeImage";
 import {extend}						from "./functions/extend";
 import {StylesHandler}				from "./stylesHandler";
 
-//todo check callbacks do else
 //todo check settings
 export class ImgUp
 {
@@ -57,32 +51,29 @@ export class ImgUp
 
 		tacks = 2;
 		this.getById(id, (err, img)=>{
-			if (err) callback(err, img);
-			this.db.images.remove(id, (err, num)=>{
-				if (err) callback(err, num);
-				check();
-			});
-			this.unlinkImage(img, (err, img)=>{
-				if (err) callback(err, img);
-				check();
-			});
+			if (err) return (callback(err, img));
+			if (!img) return (callback("image don't exist.", img));
+			this.db.images.remove(id, check);
+			this.unlinkImage(img, check);
 		});
-		function check ()
+		function check (err, x)
 		{
 			tacks--;
-			if (tacks === 0)
-				callback(null, 1);
+			if (--tacks !== 0)
+				return;
+			if (err)
+				return (callback(err, x));
+			callback(null, 1);
 		}
 	}
 
 	update (id: string, path: string, params: any, callback: (err, num)=>any)
 	{
-		//this.db.images.update(id, fields, styles, callback)
-		let fields: any;
+		let fields: {};
 		let styles: {};
 
 		fields = {};
-		styles = null;
+		styles = {};
 		if (params.profile)
 		{
 			this.getById(id, (err, doc)=>{
@@ -91,9 +82,7 @@ export class ImgUp
 					if (err) return (callback(err, newdoc));
 					this.save(path, params, (err, newImg)=>{
 						if (err) return (callback(err, newImg));
-						fields.path = newImg.path;
-						fields.url = newImg.url;
-						styles = {};
+						fields = {path: newImg.path, url: newImg.url};
 						for (let i in newImg)
 						{
 							if (newImg.hasOwnProperty(i) && newImg[i].path)
@@ -109,12 +98,10 @@ export class ImgUp
 		function save ()
 		{
 			if (params.keyWords)
-				fields.keyWords = params.keyWords;
+				fields["keyWords"] = params.keyWords;
 			if (params.alt)
-				fields.alt = params.alt;
-			this.db.images.update(id, fields, styles, (err, num)=>{
-				callback(null, num);
-			})
+				fields["alt"] = params.alt;
+			this.db.images.update(id, fields, styles, callback)
 		}
 	}
 
@@ -158,67 +145,8 @@ export class ImgUp
 		}
 		function check ()
 		{
-			tacks--;
-			if (tacks === 0)
+			if (--tacks === 0)
 				callback(null, img);
 		}
 	}
-
-
 }
-
-/*
- if (profile.source)
- {
- Magic.applyStyle({
- src: filePath,
- dest: PathHandler.prepares(profile.source.path,
- {
- type: profile.source.type ? profile.source.type : fileType(readChunk.sync(filePath, 0, 4100)).ext,
- fileName: params.fileName
- }),
- baseDir: this.settings.baseDir
- }, profile.source.style, (err, newPath)=>{
- if (err) callback(err, newPath);
- else
- {
- image.path = newPath.path;
- image.url = newPath.url;
- save.call(this);
- }
- });
- }
-module.exports =
-	{
-		baseDir: "",
-		path: "static/staticImages/:type/:styleName/:profileName/:fileName",
-		profiles:
-			{
-				avatar:
-					{
-						type: "png",
-						styles:
-							{
-								medium: "300x300>",
-								thumb: "100x100>"
-							},
-						source:
-							{
-								baseDir: "",
-								path: "static/source/:fileName.:type",
-								style: ".op"
-							},
-						delete_origin: false
-					},
-			},
-		dbSetting:
-			{
-				dataStore: "nedb",
-				saveErrors: true,
-				params:
-					{
-						dataFiles: "db"
-					}
-			}
-	};
-*/
