@@ -107,11 +107,6 @@ export class ImgUp
 		}
 	}
 
-	getById (id: string, callback: (err, image)=>any)
-	{
-		this.db.images.getById(id, callback);
-	}
-
 	update (id: string, path: string, params: any, callback: (err, num)=>any)
 	{
 		//this.db.images.update(id, fields, styles, callback)
@@ -153,6 +148,21 @@ export class ImgUp
 				callback(null, num);
 			})
 		}
+	}
+
+	getById (id: string, callback: (err, image)=>any)
+	{
+		this.db.images.getById(id, callback);
+	}
+
+	getAll (callback: (err, images)=>any)
+	{
+		this.db.images.getAll(callback);
+	}
+
+	find (s: string, callback: (err, images)=>any)
+	{
+
 	}
 
 	private unlinkImage (img: Image, callback: (err, newImg)=>any)

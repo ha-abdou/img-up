@@ -18,13 +18,6 @@ export class ImagesHandler
 		});
 	}
 
-	getById (id: string, callback: (err, doc)=>any)
-	{
-		this.db.findOne({_id: id}, (err, doc)=> {
-			callback(err, doc);
-		});
-	}
-
 	remove(id: string, callback: (err, num)=>any)
 	{
 		this.db.remove({ _id: id }, {}, callback)
@@ -49,5 +42,17 @@ export class ImagesHandler
 			}
 			this.db.update({_id: id}, {$unset: unset, $set: set}, {}, callback);
 		});
+	}
+
+	getById (id: string, callback: (err, doc)=>any)
+	{
+		this.db.findOne({_id: id}, (err, doc)=> {
+			callback(err, doc);
+		});
+	}
+
+	getAll (callback: (err, docs)=>any)
+	{
+		this.db.find({}, callback);
 	}
 }
