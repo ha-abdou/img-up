@@ -1,7 +1,7 @@
 import {Image} from "../interfaces";
 
 export function makeImage (fields: {fileName?: string, alt?: string, path?: string,
-	keyWords?: string[], url?: string}): Image
+	keyWords?: string[], url?: string, profile?: string}): Image
 {
 	let image: Image;
 
@@ -16,5 +16,7 @@ export function makeImage (fields: {fileName?: string, alt?: string, path?: stri
 		image.keyWords = fields.keyWords;
 	if (fields.url)
 		image.url = fields.url;
+	if (fields.profile)
+		image.profile = fields.profile;
 	return (image);
 }

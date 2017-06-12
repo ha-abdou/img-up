@@ -8,77 +8,45 @@ import * as readChunk				from 'read-chunk';
 import * as fs						from "fs";
 import {makeImage}					from "./functions/makeImage";
 import {extend}						from "./functions/extend";
+import {StylesHandler}				from "./stylesHandler";
 
-//todo edit  fileName
 //todo check callbacks do else
 //todo check settings
 export class ImgUp
 {
 	private db: DB;
+	private styleHandler: StylesHandler;
 
 	constructor (public settings: Setting)
 	{
 		this.db = new DB(settings.dbSetting);
+		this.styleHandler = new StylesHandler(settings);
 	}
 
 	save (filePath: string, params: any, callback: (err, newImage)=>any,
 		  toDB?: boolean)
 	{
-		let profile:	Profile;
-		let path:		ImagePath;
 		let image:		Image;
 		let tasks:		number;
 
 		tasks = 2;
-		image = makeImage({fileName: params.fileName, alt: params.alt, url: "todo",
-			keyWords: params.keyWords, path: filePath});
-		image.profile = params.profile;
-		profile = this.settings.profiles[params.profile];
-		path = this.imagePathHandler(filePath, profile, params);
-		Magic.applyStyles(path , profile.styles,
-			(err, imagesPaths)=>{
-				if (err) callback(err, imagesPaths);
-				else
-				{
-					extend(image, imagesPaths);
-					save.call(this);
-				}
-			}
-		);
-		if (profile.source)
+		image = makeImage({fileName: params.fileName, alt: params.alt, url: "",
+			keyWords: params.keyWords, path: filePath, profile: params.profile});
+		this.styleHandler.profile(filePath, params, callback,
+			(imagesPaths)=>{save.call(this, imagesPaths);});
+		this.styleHandler.source(this.settings.profiles[params.profile],
+			filePath, params.fileName, callback,
+			(src)=>{save.call(this, src);});
+		function save (obj: {})
 		{
-			Magic.applyStyle({
-				src: filePath,
-				dest: PathHandler.prepares(profile.source.path,
-					{
-						type: profile.source.type ? profile.source.type : fileType(readChunk.sync(filePath, 0, 4100)).ext,
-						fileName: params.fileName
-					}),
-				baseDir: this.settings.baseDir
-			}, profile.source.style, (err, newPath)=>{
-				if (err) callback(err, newPath);
-				else
-				{
-					image.path = newPath.path;
-					image.url = newPath.url;
-					save.call(this);
-				}
-			});
-		}
-		function save ()
-		{
-			tasks--;
-			if (tasks !== 0)
+			extend(image, obj);
+			if (--tasks !== 0)
 				return;
-			if (toDB === undefined || toDB === true)
-			{
-				this.db.images.save(image, (err, newImage)=>{
-					callback(err, newImage);
-				});
-			}
-			else if (toDB === false)
+			if (toDB === false)
 				callback(null, image);
-			if (profile.delete_origin)
+			else
+				this.db.images.save(image, callback);
+			if (this.settings.profiles[params.profile].delete_origin)
 				fs.unlinkSync(filePath);
 		}
 	}
@@ -196,24 +164,30 @@ export class ImgUp
 		}
 	}
 
-	private imagePathHandler (filePath: string, profile: Profile, params: any): ImagePath
-	{
-		return (
-			{
-				src: filePath,
-				baseDir: this.settings.baseDir,
-				dest: PathHandler.prepares(this.settings.path,
-					{
-						type: profile.type ? profile.type : fileType(readChunk.sync(filePath, 0, 4100)).ext,
-						profileName: params.profile,
-						fileName: params.fileName
-					})
-			}
-		);
-	}
+
 }
 
 /*
+ if (profile.source)
+ {
+ Magic.applyStyle({
+ src: filePath,
+ dest: PathHandler.prepares(profile.source.path,
+ {
+ type: profile.source.type ? profile.source.type : fileType(readChunk.sync(filePath, 0, 4100)).ext,
+ fileName: params.fileName
+ }),
+ baseDir: this.settings.baseDir
+ }, profile.source.style, (err, newPath)=>{
+ if (err) callback(err, newPath);
+ else
+ {
+ image.path = newPath.path;
+ image.url = newPath.url;
+ save.call(this);
+ }
+ });
+ }
 module.exports =
 	{
 		baseDir: "",
