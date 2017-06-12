@@ -32,6 +32,7 @@ export class ImgUp
 		tasks = 2;
 		image = makeImage({fileName: params.fileName, alt: params.alt, url: "todo",
 			keyWords: params.keyWords, path: filePath});
+		image.profile = params.profile;
 		profile = this.settings.profiles[params.profile];
 		path = this.imagePathHandler(filePath, profile, params);
 		Magic.applyStyles(path , profile.styles,
@@ -111,18 +112,47 @@ export class ImgUp
 		this.db.images.getById(id, callback);
 	}
 
-	edit (id: string, fields: {alt?: string, keyWords?: string[]},
-		  callback: (err, num)=>any)
+	update (id: string, path: string, params: any, callback: (err, num)=>any)
 	{
-		this.db.images.edit(id, {
-			alt: fields.alt,
-			keyWords: fields.keyWords
-		}, callback);
-	}
+		//this.db.images.update(id, fields, styles, callback)
+		let fields: any;
+		let styles: {};
 
-	replace ()
-	{
-		
+		fields = {};
+		styles = null;
+		if (params.profile)
+		{
+			this.getById(id, (err, doc)=>{
+				if (err) return (callback(err, doc));
+				this.unlinkImage(doc, (err, newdoc)=>{
+					if (err) return (callback(err, newdoc));
+					this.save(path, params, (err, newImg)=>{
+						if (err) return (callback(err, newImg));
+						fields.path = newImg.path;
+						fields.url = newImg.url;
+						styles = {};
+						for (let i in newImg)
+						{
+							if (newImg.hasOwnProperty(i) && newImg[i].path)
+								styles[i] = {path: newImg[i].path, url: newImg[i].url};
+						}
+						save.call(this);
+					}, false);
+				});
+			});
+		}
+		else
+			save.call(this);
+		function save ()
+		{
+			if (params.keyWords)
+				fields.keyWords = params.keyWords;
+			if (params.alt)
+				fields.alt = params.alt;
+			this.db.images.update(id, fields, styles, (err, num)=>{
+				callback(null, num);
+			})
+		}
 	}
 
 	private unlinkImage (img: Image, callback: (err, newImg)=>any)
@@ -173,33 +203,6 @@ export class ImgUp
 	}
 }
 
-/*
- let image: Image;
-
- image = makeImage(params);
- if (filePath && filePath !== "")
- {
- this.getById(id, (err, img)=>{
- if (err) return (callback(err, img));
- this.unlinkImage(img, (err, dImg)=>{
- if (err) return (callback(err, dImg));
- this.save(filePath, params, (err, newImg)=>{
- if (err) return (callback(err, newImg));
- this.db.images.update({_id: id}, img, {}, function (err, num) {
- callback(err, num);
- });
- }, false);
- })
- });
- }
- updateParams(image);
-
- function updateParams (img: Image)
- {
- //img._id = id;
-
- }
- */
 /*
 module.exports =
 	{
