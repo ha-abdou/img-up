@@ -55,4 +55,9 @@ export class ImagesHandler
 	{
 		this.db.find({}, callback);
 	}
+
+	find (query: {}, callback: (err, docs)=>any)
+	{
+		this.db.find(query, callback);
+	}
 }

@@ -160,9 +160,9 @@ export class ImgUp
 		this.db.images.getAll(callback);
 	}
 
-	find (s: string, callback: (err, images)=>any)
+	find (query: any, callback: (err, images)=>any)
 	{
-
+		this.db.images.find(query, callback);
 	}
 
 	private unlinkImage (img: Image, callback: (err, newImg)=>any)
