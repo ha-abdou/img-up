@@ -1,0 +1,22 @@
+extends layout
+
+block content
+    h1= "upload new image"
+
+    form(action="new" method="post" enctype="multipart/form-data")
+        div.form-group
+            label(for="image-input") Image input:
+            input(id="image-input" type="file" name="image")
+        div.form-group
+            label(for="name-input") fileName:
+            input(id="name-input" class="form-control" type='text' name="name"
+            placeholder="name")
+        div.form-group
+            label(for="alt-input") alt:
+            input(id="alt-input" class="form-control" type='text' name="alt"
+            placeholder="alt")
+        div.form-group
+            label(for="key-words-input") keyWords:
+            input(id="key-words-input" class="form-control" type='text'
+            name="keyWords" placeholder="keyWord,keyWord,keyWord")
+        input(type='submit' value="Submit" class="btn btn-default")

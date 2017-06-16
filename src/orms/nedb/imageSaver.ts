@@ -35,10 +35,13 @@ export class ImagesHandler
 		extend(set, fields);
 		this.getById(id, (err, img)=>{
 			if (err) return (callback(err, img));
-			for (let i in img)
+			if (!isEmpty(styles))
 			{
-				if (img.hasOwnProperty(i) && img[i].path && !set.hasOwnProperty(i))
-					unset[i] = true;
+				for (let i in img)
+				{
+					if (img.hasOwnProperty(i) && img[i].path && !set.hasOwnProperty(i))
+						unset[i] = true;
+				}
 			}
 			this.db.update({_id: id}, {$unset: unset, $set: set}, {}, callback);
 		});
@@ -60,4 +63,13 @@ export class ImagesHandler
 	{
 		this.db.find(query, callback);
 	}
+}
+//todo remove
+function isEmpty(obj) {
+	for(let prop in obj) {
+		if(obj.hasOwnProperty(prop))
+			return false;
+	}
+
+	return JSON.stringify(obj) === JSON.stringify({});
 }

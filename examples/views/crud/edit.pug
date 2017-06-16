@@ -1,0 +1,24 @@
+extends layout
+
+block content
+    h1= "edit image"
+
+    img( src= img.medium.url alt= img.alt)
+    form(action="edit" method="post" enctype="multipart/form-data")
+        div.form-group
+            label(for="image-input") Image input:
+            input(id="image-input" type="file" name="image")
+        div.form-group
+            label(for="name-input") fileName:
+            input(id="name-input" class="form-control" type='text' name="name"
+            placeholder="name" value= img.fileName)
+        div.form-group
+            label(for="alt-input") alt:
+            input(id="alt-input" class="form-control" type='text' name="alt"
+            placeholder="alt" value= img.alt)
+        div.form-group
+            label(for="key-words-input") keyWords:
+            input(id="key-words-input" class="form-control" type='text'
+            name="keyWords" placeholder="keyWord,keyWord,keyWord"
+            value= img.keyWords.toString())
+        input(type='submit' value="Submit" class="btn btn-default")

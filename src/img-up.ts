@@ -6,6 +6,8 @@ import {extend}						from "./functions/extend";
 import {StylesHandler}				from "./stylesHandler";
 
 //todo check settings
+//todo fileName unique
+//todo edit fileName
 export class ImgUp
 {
 	private db: DB;
@@ -74,8 +76,9 @@ export class ImgUp
 
 		fields = {};
 		styles = {};
-		if (params.profile)
+		if (params.profile && path !== "")
 		{
+			console.log("------->");
 			this.getById(id, (err, doc)=>{
 				if (err) return (callback(err, doc));
 				this.unlinkImage(doc, (err, newdoc)=>{

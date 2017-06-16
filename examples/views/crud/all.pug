@@ -1,0 +1,24 @@
+extends layout
+
+block content
+
+    h1= "Images list"
+    table(class="table table-striped")
+        thead
+            tr
+                th() id
+                th() thumb
+                th() name
+                th() actions
+        tbody
+            each image in imgs
+                tr
+                    td= image._id
+                    td
+                        img( src= image.thumb.url alt= image.alt)
+                    td= image.fileName
+                    td
+                        a(href= image._id + "/edit" class="btn btn-warning") edit
+                        a(href= image._id class= "btn btn-primary") view
+                        a(href= image._id + "/remove" class="btn btn-danger" onclick="return confirm('Are you sure?')"
+                        ) "delete"

@@ -43,7 +43,8 @@ export class Magic
 		Magic.resize(path.src, path.baseDir + path.dest, style,
 			(err, imagePath)=>{
 				if (err) callback({msg: "can't resize", err: err}, imagePath);
-				else callback(null, {url: path.dest, path: path.baseDir + path.dest});
+				else callback(null, {url: '/' + path.dest,
+					path: path.baseDir + path.dest});
 			});
 	}
 

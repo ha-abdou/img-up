@@ -1,0 +1,21 @@
+extends layout
+
+block content
+
+    a(href= img._id + "/edit" class="btn btn-warning") edit
+    a(
+        href= img._id + "/remove"
+        class="btn btn-danger"
+        onclick="return confirm('Are you sure?')"
+    ) "delete"
+    div(class="jumbotron")
+        div(class="container")
+            pre
+                h4= "fileName: " + img.fileName
+                h4= "alt: " + img.alt
+                h4= "keyWords: " + img.keyWords
+                h4= "profile: " + img.profile
+                h4= "createdAt: " + new Date(img.createdAt)
+                h4= "createdAt " + new Date(img.createdAt)
+                img( src= img.thumb.url alt= img.alt)
+                img( src= img.medium.url alt= img.alt)
