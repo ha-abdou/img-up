@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "grunt",
-    "watch": "grunt watch"
+    "watch": "grunt watch",
+    "test": "mocha"
   },
   "dependencies": {
     "@types/imagemagick": "0.0.29",
@@ -18,14 +19,17 @@
     "read-chunk": "^2.0.0"
   },
   "devDependencies": {
-    "concurrently": "^3.2.0",
-    "tslint": "^3.15.1",
+    "grunt-mocha": "~0.4.6",
     "@types/multer": "0.0.33",
+    "chai": "^4.0.2",
+    "concurrently": "^3.2.0",
     "grunt": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-ts": "^6.0.0-beta.15",
+    "mocha": "^3.4.2",
     "nodemon": "^1.11.0",
+    "tslint": "^3.15.1",
     "typescript": "^2.3.3"
   },
   "repository": {

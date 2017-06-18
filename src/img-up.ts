@@ -8,6 +8,7 @@ import {StylesHandler}				from "./stylesHandler";
 //todo check settings
 //todo fileName unique
 //todo edit fileName
+//todo process.env['ENV'] = 'DEV';
 export class ImgUp
 {
 	private db: DB;

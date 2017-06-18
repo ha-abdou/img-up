@@ -1,6 +1,3 @@
-/**
- * Created by abdou on 25/05/17.
- */
 module.exports = function(grunt) {
     "use strict";
 
@@ -23,14 +20,22 @@ module.exports = function(grunt) {
                 files: ["src/\*\*/\*.ts"],
                 tasks: ["ts"]
             }
+        },
+        pkg: grunt.file.readJSON('package.json'),
+        mocha: {
+            all: {
+                src: ['tests/testrunner.html'],
+            },
+            options: {
+                run: true
+            }
         }
     });
 
     grunt.loadNpmTasks("grunt-contrib-watch");
     grunt.loadNpmTasks("grunt-ts");
+    grunt.loadNpmTasks('grunt-mocha');
 
-    grunt.registerTask("default", [
-        "ts"
-    ]);
+    grunt.registerTask("default", ["ts"]);
 
 };
