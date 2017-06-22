@@ -4,6 +4,8 @@ import * as fs						from "fs";
 import {makeImage}					from "./functions/makeImage";
 import {extend}						from "./functions/extend";
 import {StylesHandler}				from "./stylesHandler";
+import {checkSettings} 				from "./settingsChecker";
+import {NEDB_DEFAULT_SETTING}		from "./counst";
 
 //todo check settings
 //todo fileName unique
@@ -16,7 +18,9 @@ export class ImgUp
 
 	constructor (public settings: Setting)
 	{
-		this.db = new DB(settings.dbSetting);
+		checkSettings(settings);
+		this.db = settings.dbSetting ? new DB(settings.dbSetting) :
+			new DB(NEDB_DEFAULT_SETTING);
 		this.styleHandler = new StylesHandler(settings);
 	}
 

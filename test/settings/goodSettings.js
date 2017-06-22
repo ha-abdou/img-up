@@ -14,6 +14,14 @@ module.exports =
                             delete_origin: false
                         },
                 },
+            dbSetting:
+                {
+                    dataStore: "nedb",
+                    params:
+                        {
+                            dataFiles: "db"
+                        }
+                }
         },
         {
             baseDir: "static/",
@@ -36,6 +44,6 @@ module.exports =
                             delete_origin: true,
                             type: "jpeg"
                         },
-                },
+                }
         }
     ];

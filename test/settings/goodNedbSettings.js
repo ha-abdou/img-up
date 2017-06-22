@@ -42,10 +42,9 @@ module.exports =
             dbSetting:
                 {
                     dataStore: "nedb",
-                    saveErrors: false,
                     params:
                         {
-                            dataFiles: "db"
+                            dataFiles: "aaaaa/bbb"
                         }
                 }
         },

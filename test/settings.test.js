@@ -1,26 +1,35 @@
 "use strict";
 
-let assert = require('chai').assert;
-let expect = require('chai').expect;
-let ImgUp = require('../index').ImgUp;
+let expect  = require('chai').expect;
+let ImgUp   = require('../index').ImgUp;
+let rimraf  = require('rimraf');
 
 describe('Init ImgUp', function()
 {
     describe("#Check style and source settings", function ()
     {
-        //todo errorType
-        testSettings('./settings/badSettings', './settings/goodSettings', null);
+        testSettings('./settings/badSettings', './settings/goodSettings');
+        it('Remove tmp files:', function (done) {
+            rimraf('db', ()=>{
+                done();
+            });
+        })
     });
-
     describe("#Check database settings", function ()
     {
-        //todo errorType
-        testSettings('./settings/badNedbSettings',
-            './settings/goodNedbSettings', null);
+        describe("##NEDB:", function ()
+        {
+            testSettings('./settings/badNedbSettings', './settings/goodNedbSettings');
+            it('Remove tmp files:', function (done) {
+                rimraf('db', ()=>{
+                    done();
+                });
+            })
+        });
     });
 });
 
-function testSettings(bad, good, errorType)
+function testSettings(bad, good)
 {
     let badSettings = require(bad);
     let goodSettings = require(good);
@@ -33,8 +42,8 @@ function testSettings(bad, good, errorType)
             {
                 expect(function ()
                 {
-                    (new ImgUp(badSettings[setting]))
-                }).to.throw(errorType);
+                    (new ImgUp(badSettings[setting].set))
+                }).to.throw(badSettings[setting].err);
             });
         }
     }

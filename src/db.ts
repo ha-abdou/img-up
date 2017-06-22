@@ -10,7 +10,9 @@ export class DB
 	constructor (public setting: DBSetting)
 	{
 		if (setting.dataStore === "nedb")
-			this.orm = new NedbOrm(setting.params.dataFiles);
+			this.orm = new NedbOrm(setting);
+		else
+			throw "DB setting error: unknown dataStore name";
 		this.images = this.orm.images;
 	}
 }

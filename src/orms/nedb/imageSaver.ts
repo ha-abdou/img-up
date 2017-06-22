@@ -1,6 +1,7 @@
 import {Image}		from "../../interfaces";
 import * as Nedb	from "nedb";
 import {extend}		from "../../functions/extend";
+import {isEmptyObj} from "../../functions/is";
 
 export class ImagesHandler
 {
@@ -35,7 +36,7 @@ export class ImagesHandler
 		extend(set, fields);
 		this.getById(id, (err, img)=>{
 			if (err) return (callback(err, img));
-			if (!isEmpty(styles))
+			if (!isEmptyObj(styles))
 			{
 				for (let i in img)
 				{
@@ -63,13 +64,4 @@ export class ImagesHandler
 	{
 		this.db.find(query, callback);
 	}
-}
-//todo remove
-function isEmpty(obj) {
-	for(let prop in obj) {
-		if(obj.hasOwnProperty(prop))
-			return false;
-	}
-
-	return JSON.stringify(obj) === JSON.stringify({});
 }
